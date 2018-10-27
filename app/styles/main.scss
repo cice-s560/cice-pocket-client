@@ -4,6 +4,7 @@ $bgColor: #ddd;
 
 body {
   background-color: $bgColor;
+  min-width: 350px;
 
   .main-nav {
     padding: 0 1rem;
@@ -55,10 +56,9 @@ body {
 
     form {
       max-width: 80%;
-      margin: 3rem auto 0;
-
-      #submit-website-btn {
-        margin-top: -2rem;
+      margin: -2rem auto 0;
+      #category {
+        margin-bottom: 2rem;
       }
     }
   }

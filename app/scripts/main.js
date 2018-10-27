@@ -15,13 +15,78 @@ M.AutoInit();
   const $websitesGrid = document.querySelector("#websites-grid");
   const $urlWebsite = document.querySelector("#url-website");
   const $submitWebsiteBtn = document.querySelector("#submit-website-btn");
+  const $categoryInput = document.querySelector('#category-input');
+  const $navbarTabsContainer = document.querySelector('#navbar-tabs-container');
 
   let isSendingWebsite = false;
 
+  //
+  // Init
+  //
+  renderCards();
+  renderCategories().then(()=>bindTabs());
 
-  ////////////////////////////////////
-  //// Helper functions
-  ////
+  //
+  // Binding
+  //
+  function bindTabs(){
+    const $navbarTabsLinks = document.querySelectorAll('.navbar-tab a');
+    $navbarTabsLinks.forEach($tab => {
+      $tab.addEventListener("click", function(e){
+        renderCards(this.getAttribute("href").substring(1));
+      });
+    })
+  }
+
+  //
+  // Helper functions
+  //
+
+  // Update elementos del DOM que dependen de las categorias
+  function renderCategories(){
+    return getCategories().then(categories => {
+      // Setup autocomplete
+      let autocomplete = {};
+      categories.forEach(category => {
+        autocomplete[category] = null;
+      });
+      M.Autocomplete.init($categoryInput, {
+        data: autocomplete
+      });
+      // Setup header tabs
+      let retrievedCategories = [];
+      $navbarTabsContainer.innerHTML = "";
+      categories.forEach(category => {
+        if(retrievedCategories.indexOf(category) >= 0)
+          return;
+        retrievedCategories.push(category);
+        // <li class="tab"><a href="#todas">Todas</a></li>
+        const $tab = document.createElement("li");
+        $tab.classList.add("tab");
+        $tab.classList.add("navbar-tab");
+        const $link = document.createElement("a"); 
+        $link.href = "#" + category;
+        $link.innerText = category;
+        $tab.appendChild($link);
+        $navbarTabsContainer.appendChild($tab);
+      });
+      // Devolvemos una promesa para encadenar acciones
+      return Promise.resolve();
+    });
+  }
+
+  // Get categories
+  function getCategories(){
+    return new Promise((resolve, reject) => {
+      fetch(`${SERVER_URL}/website/categories`)
+      .then(resp => resp.json())
+      .then(data => resolve(data.categories || []))
+      .catch(err => {
+        websiteCreationFail()
+        reject();
+      });
+    });
+  }
 
   // Card para pintar
   const getCard = ({ title, url, description, image }) => `<div class="col s12 m6 l4">
@@ -41,6 +106,7 @@ M.AutoInit();
 
   function clearCreationArea() {
     $urlWebsite.value = "";
+    $categoryInput.value = "";
 
     isSendingWebsite = false;
 
@@ -55,8 +121,8 @@ M.AutoInit();
   function websiteCreationSuccess(data) {
     // Limpiamos y cerramos el área de creación
     clearCreationArea();
-
-    $websitesGrid.innerHTML += getCard(data);
+    renderCards();
+    renderCategories();
   }
 
   function websiteCreationFail() {
@@ -69,13 +135,17 @@ M.AutoInit();
     });
   }
 
-  async function getInitialCards() {
-    const req = await fetch(`${SERVER_URL}/website/list`).catch(err => websiteCreationFail());
+  async function renderCards(category) {
+    $websitesGrid.innerHTML = "";
+    let fetchURL = `${SERVER_URL}/website/list`;
+    if(category)
+      fetchURL = `${fetchURL}?category=${category}`;
+
+    const req = await fetch(fetchURL).catch(err => websiteCreationFail());
     const data = await req.json();
 
     data.list && data.list.forEach(item => $websitesGrid.innerHTML += getCard(item));
   }
-
 
   ////////////////////////////////////
   //// Handlers
@@ -112,6 +182,13 @@ M.AutoInit();
     $urlWebsite.classList.remove("validate");
     $urlWebsite.setAttribute("disabled", "disabled");
 
+    // Control de categoria
+    let category = "Todas";
+    if($categoryInput.value){
+      category = String($categoryInput.value);
+      category = category[0].toUpperCase() + category.slice(1); // Uppercase first char
+    }
+
     // Preparo cabeceras y petición de envío
     const reqOptions = {
       method: "POST",
@@ -119,7 +196,10 @@ M.AutoInit();
         "Content-Type": "application/json"
       },
       mode: "cors",
-      body: JSON.stringify({ url: $urlWebsite.value })
+      body: JSON.stringify({ 
+        url: $urlWebsite.value,
+        category
+      })
     };
 
     // Envío + catch
@@ -136,11 +216,5 @@ M.AutoInit();
     // Generamos la card con los datos recibidos
     websiteCreationSuccess(resp);
   });
-
-
-  ///////////////////////////////////
-  //// Scripts de inicio
-  ////
-
-  getInitialCards();
+  
 })();

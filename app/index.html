@@ -26,13 +26,14 @@
 
 <body>
   <header>
-    <nav class="main-nav">
+    <nav class="nav-extended" style="padding: 0 15px">
       <div class="nav-wrapper">
         <a href="#" class="brand-logo">CICE Pocket</a>
-        <ul id="nav-mobile" class="right">
-          <li>
-            <a href="#">Filtro</a>
-          </li>
+      </div>
+      <div class="nav-content">
+        <ul class="tabs tabs-transparent" id="navbar-tabs-container">
+          <li class="tab navbar-tab"><a href="#todas">Todas</a></li>
+        </ul>
       </div>
     </nav>
   </header>
@@ -55,12 +56,17 @@
         </span>
       </header>
       <section>
-        <form id="create-website-form">
+        <form id="create-website-form" autocomplete="off">
           <div class="input-field">
             <i class="material-icons prefix">language</i>
             <input placeholder="http://www.yourfaovireweb.com" id="url-website" type="url" class="validate">
             <label for="url-website">Url website</label>
             <span class="helper-text" data-error="La url no es válida" data-success=""></span>
+          </div>
+          <div class="input-field" id="category">
+            <i class="material-icons prefix">bookmark</i>
+            <input type="text" id="category-input" class="autocomplete">
+            <label>Categoría</label>
           </div>
           <button id="submit-website-btn" class="btn waves-effect waves-light right" type="submit" name="action">Añadir
             <i class="material-icons right">send</i>
