@@ -33,7 +33,11 @@ M.AutoInit();
     const $navbarTabsLinks = document.querySelectorAll('.navbar-tab a');
     $navbarTabsLinks.forEach($tab => {
       $tab.addEventListener("click", function(e){
-        renderCards(this.getAttribute("href").substring(1));
+        const category = this.getAttribute("href").substring(1);
+        if(category)
+          renderCards(category);
+        else
+          renderCards();
       });
     })
   }
@@ -42,13 +46,27 @@ M.AutoInit();
   // Helper functions
   //
 
+  function renderTab(text, id){
+    const $tab = document.createElement("li");
+    $tab.classList.add("tab");
+    $tab.classList.add("navbar-tab");
+    const $link = document.createElement("a"); 
+    if(id)
+      $link.href = "#" + id;
+    else
+      $link.href = "#";
+    $link.innerText = text;
+    $tab.appendChild($link);
+    $navbarTabsContainer.appendChild($tab);
+  }
+
   // Update elementos del DOM que dependen de las categorias
   function renderCategories(){
     return getCategories().then(categories => {
       // Setup autocomplete
       let autocomplete = {};
       categories.forEach(category => {
-        autocomplete[category] = null;
+        autocomplete[category.name] = null;
       });
       M.Autocomplete.init($categoryInput, {
         data: autocomplete
@@ -56,19 +74,13 @@ M.AutoInit();
       // Setup header tabs
       let retrievedCategories = [];
       $navbarTabsContainer.innerHTML = "";
+      renderTab("Todas");
       categories.forEach(category => {
         if(retrievedCategories.indexOf(category) >= 0)
           return;
         retrievedCategories.push(category);
         // <li class="tab"><a href="#todas">Todas</a></li>
-        const $tab = document.createElement("li");
-        $tab.classList.add("tab");
-        $tab.classList.add("navbar-tab");
-        const $link = document.createElement("a"); 
-        $link.href = "#" + category;
-        $link.innerText = category;
-        $tab.appendChild($link);
-        $navbarTabsContainer.appendChild($tab);
+        renderTab(category.name, category._id);
       });
       // Devolvemos una promesa para encadenar acciones
       return Promise.resolve();
@@ -136,6 +148,7 @@ M.AutoInit();
   }
 
   async function renderCards(category) {
+    console.log("Rendering cards...", category);
     $websitesGrid.innerHTML = "";
     let fetchURL = `${SERVER_URL}/website/list`;
     if(category)
