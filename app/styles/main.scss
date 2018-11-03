@@ -1,5 +1,65 @@
 // bower:scss
 // endbower
+$bgColor: #ddd;
 
 body {
+  background-color: $bgColor;
+
+  .main-nav {
+    padding: 0 1rem;
+  }
+
+  #creation-area {
+    position: fixed;
+    z-index: 1000;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    height: 350px;
+    background-color: #fff;
+    bottom: 0;
+    left: 0;
+    visibility: hidden;
+    transform: translateY(350px);
+    transition: transform 0.3s cubic-bezier(0.165, 0.84, 0.44, 1);
+
+    &.open {
+      visibility: visible;
+      transform: translateY(0);
+    }
+
+    header, section {
+      width: 100%;
+    }
+
+    #close-creation-area {
+      cursor: pointer;
+      padding: 2rem;
+
+      &.loading {
+        opacity: 0.3;
+      }
+
+      &:active {
+        opacity: 0.4;
+      }
+      &::selection {
+        background: transparent;
+      }
+
+      i, i::selection {
+        background: transparent;
+      }
+    }
+
+    form {
+      max-width: 80%;
+      margin: 3rem auto 0;
+
+      #submit-website-btn {
+        margin-top: -2rem;
+      }
+    }
+  }
 }
