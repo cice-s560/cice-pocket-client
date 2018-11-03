@@ -7,6 +7,11 @@ body {
 
   .main-nav {
     padding: 0 1rem;
+
+    #category-select,
+    .blanco input {
+      color: #ddd;
+    }
   }
 
   #creation-area {
@@ -16,7 +21,7 @@ body {
     flex-direction: column;
     align-items: center;
     width: 100%;
-    height: 350px;
+    height: 400px;
     background-color: #fff;
     bottom: 0;
     left: 0;
@@ -29,7 +34,8 @@ body {
       transform: translateY(0);
     }
 
-    header, section {
+    header,
+    section {
       width: 100%;
     }
 
@@ -48,7 +54,8 @@ body {
         background: transparent;
       }
 
-      i, i::selection {
+      i,
+      i::selection {
         background: transparent;
       }
     }
@@ -56,10 +63,6 @@ body {
     form {
       max-width: 80%;
       margin: 3rem auto 0;
-
-      #submit-website-btn {
-        margin-top: -2rem;
-      }
     }
   }
 }

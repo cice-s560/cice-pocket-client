@@ -31,7 +31,13 @@
         <a href="#" class="brand-logo">CICE Pocket</a>
         <ul id="nav-mobile" class="right">
           <li>
-            <a href="#">Filtro</a>
+            <form>
+              <div class="input-field col s12">
+                <select id="category-select">
+                  <option value="" disabled selected>Categorías</option>
+                </select>
+              </div>
+            </form>
           </li>
       </div>
     </nav>
@@ -61,6 +67,11 @@
             <input placeholder="http://www.yourfaovireweb.com" id="url-website" type="url" class="validate">
             <label for="url-website">Url website</label>
             <span class="helper-text" data-error="La url no es válida" data-success=""></span>
+          </div>
+          <div class="input-field">
+            <i class="material-icons prefix">label</i>
+            <input type="text" id="category-input" class="autocomplete">
+            <label for="category-input">Categoría</label>
           </div>
           <button id="submit-website-btn" class="btn waves-effect waves-light right" type="submit" name="action">Añadir
             <i class="material-icons right">send</i>
